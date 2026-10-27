@@ -1,0 +1,17 @@
+{
+    "name": "The Importer 168 – Worker",
+    "short_name": "Importer 168",
+    "description": "ตรวจสอบเอกสารแรงงานของคุณ / Check your work documents",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#d6e4fb",
+    "theme_color": "#cfe3fb",
+    "lang": "th",
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ]
+}

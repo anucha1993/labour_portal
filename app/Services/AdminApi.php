@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -94,7 +95,8 @@ class AdminApi
                 ->asJson()
                 ->withHeaders(['X-Portal-Key' => $this->key])
                 ->timeout($this->timeout)
-                ->retry(2, 300, throw: false));
+                // Retry only network failures and 5xx: a 422 (wrong password) must not be sent twice.
+                ->retry(2, 300, fn ($e) => $e instanceof ConnectionException || ($e instanceof RequestException && $e->response->serverError()), throw: false));
         } catch (ConnectionException $e) {
             report($e);
             throw new AdminApiException('unavailable', 503, $e);
