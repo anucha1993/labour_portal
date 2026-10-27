@@ -1,58 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Worker Portal — labour.importer168.com
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+เว็บแอปสำหรับแรงงานต่างด้าวดูข้อมูลและไฟล์เอกสารของตนเองผ่านมือถือ (The Importer 168)
 
-## About Laravel
+Laravel 13 · PHP 8.3 · ไม่มีฐานข้อมูลของตัวเอง — ข้อมูลทั้งหมดดึงจากระบบ admin (`admin.importer168.com`) ผ่าน API
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## การเข้าสู่ระบบของแรงงาน
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| ช่อง | ค่า |
+|---|---|
+| User | เลขที่หนังสือเดินทาง (`labour_passport_number`) ไม่สนตัวพิมพ์เล็ก/ใหญ่ |
+| Password | วันเกิดรูปแบบ `ddmmyyyy` เช่น เกิด 6 ธ.ค. 1997 → `06121997` |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+เข้าได้เฉพาะแรงงานที่ `labour_status = enable` ในระบบ admin (แรงงานที่ไม่มีวันเกิดในระบบจะเข้าไม่ได้)
+ใส่ผิดเกิน 8 ครั้ง/นาที ต่อ passport จะถูกล็อกชั่วคราว (และฝั่ง admin จำกัด 10 ครั้ง/นาที อีกชั้น)
 
-## Learning Laravel
+## หน้าจอ (ตาม UI.pdf)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Login** — passport + วันเกิด
+2. **หน้าแรก** — ชื่อ / นายจ้าง / สถานะ, การ์ด Passport, Work Permit, Visa, 90 วัน (วันหมดอายุ + วันคงเหลือ), ที่อยู่แจ้งที่พัก (ที่อยู่บริษัทนายจ้าง), ปุ่มดาวน์โหลดเอกสาร, กระดิ่งแจ้งเตือนเอกสารใกล้หมดอายุ (ใช้เกณฑ์วันจาก "ตั้งค่าวันแจ้งเตือน" ของ admin)
+3. **เอกสาร** — รายการไฟล์ทั้งหมดของแรงงาน กด "เปิด" แล้วระบบจะขอลิงก์ชั่วคราว (15 นาที) จาก admin แล้วเปิดไฟล์ (ไฟล์บน R2 ไปที่ presigned URL, ไฟล์บนเครื่อง admin ส่งผ่านแอป)
+4. **ข้อมูลของฉัน** — ข้อมูลส่วนตัว การจ้างงาน วีซ่า และปุ่มออกจากระบบ
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+รองรับติดตั้งเป็นแอปบนหน้าจอมือถือ (PWA manifest + ไอคอนใน `public/icons/`)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## การติดตั้ง / Deploy
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install --no-dev --optimize-autoloader
+cp .env.example .env && php artisan key:generate
+php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Document root ชี้ที่ `public/`. ไม่ต้องรัน migrate (ไม่ใช้ฐานข้อมูล: session และ cache เป็นไฟล์ใน `storage/`)
 
-## Contributing
+ค่าใน `.env` ที่ต้องตั้ง
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```dotenv
+APP_URL=https://labour.importer168.com
+APP_ENV=production
+APP_DEBUG=false
+SESSION_DRIVER=file
+CACHE_STORE=file
+SESSION_SECURE_COOKIE=true
 
-## Code of Conduct
+ADMIN_API_URL=https://admin.importer168.com
+ADMIN_API_KEY=<ค่าเดียวกับ PORTAL_API_KEY ใน .env ของ admin>
+ADMIN_API_TIMEOUT=20
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+ฝั่ง admin ต้องตั้ง `PORTAL_API_KEY` ใน `.env` (ค่าเดียวกัน) แล้ว `php artisan config:clear`
+สร้างคีย์ใหม่ได้ด้วย `php -r "echo bin2hex(random_bytes(24));"`
 
-## Security Vulnerabilities
+## API ที่ใช้ (ฝั่ง admin)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+ทุก request ส่ง header `X-Portal-Key: <key>`
 
-## License
+| Method | Path | ใช้ทำอะไร |
+|---|---|---|
+| POST | `/api/portal/login` `{passport, password}` | ตรวจ passport + วันเกิด → `{labour_id, profile}` (422 `invalid_credentials` / `account_disabled`) |
+| GET | `/api/portal/labours/{id}` | โปรไฟล์ล่าสุด (403 ถ้าถูกปิดใช้งาน) |
+| GET | `/api/portal/labours/{id}/documents/{key}/link` | ลิงก์เปิดไฟล์แบบ signed อายุ 15 นาที |
+| GET | `/portal-file/{id}/{key}?expires&signature` | ปลายทางของลิงก์ด้านบน (ไม่ต้องล็อกอิน ลายเซ็นคือสิทธิ์) |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## โครงสร้างโค้ด
+
+- `app/Services/AdminApi.php` — client เรียก API ของ admin (retry เฉพาะ network/5xx)
+- `app/Services/WorkerSession.php` — เก็บแรงงานที่ล็อกอินใน session และ cache โปรไฟล์ 2 นาที (`?refresh=1` เพื่อดึงใหม่)
+- `app/Http/Controllers/AuthController.php`, `PortalController.php`
+- `app/Http/Middleware/EnsureWorkerLoggedIn.php` (`worker`), `RedirectIfWorkerLoggedIn.php` (`worker.guest`)
+- `resources/views/` — `auth/login`, `home`, `documents`, `profile`, `layouts/app`, `components/icon` (SVG inline), `components/remaining`
+- `public/css/portal.css`, `public/js/portal.js` — ธีมมือถือ (ไม่ต้อง build ด้วย Vite)
+
+## ทดสอบ
+
+```bash
+php artisan test        # tests/Feature/PortalTest.php (จำลอง API ของ admin ด้วย Http::fake)
+```
+
+ทดสอบจริงกับเครื่อง dev: รัน admin ที่พอร์ตหนึ่ง แล้วรัน portal ด้วย
+`ADMIN_API_URL=http://127.0.0.1:8765 php artisan serve --port=8766`

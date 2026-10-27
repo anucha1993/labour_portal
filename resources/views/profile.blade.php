@@ -33,8 +33,8 @@
         <div class="card-head"><span class="card-icon tone-navy"><x-icon name="work" /></span><div><b>Employment</b><small>การจ้างงาน</small></div></div>
         <dl class="kv">
             <dt>Employer <small>นายจ้าง</small></dt><dd>{{ $emp['name'] ?? '-' }}</dd>
-            @if ($emp && $emp['type'])<dt>Business <small>ประเภทกิจการ</small></dt><dd>{{ $emp['type'] }}</dd>@endif
-            @if ($emp && $emp['phone'])<dt>Phone <small>โทรศัพท์</small></dt><dd><a href="tel:{{ preg_replace('/\D+/', '', $emp['phone']) }}">{{ $emp['phone'] }}</a></dd>@endif
+            @if ($emp && trim($emp['type'] ?? '', " -"))<dt>Business <small>ประเภทกิจการ</small></dt><dd>{{ $emp['type'] }}</dd>@endif
+            @if ($emp && preg_match('/\d{6,}/', preg_replace('/\D+/', '', $emp['phone'] ?? '')))<dt>Phone <small>โทรศัพท์</small></dt><dd><a href="tel:{{ preg_replace('/\D+/', '', $emp['phone']) }}">{{ $emp['phone'] }}</a></dd>@endif
             <dt>Agency <small>เอเจนซี่</small></dt><dd>{{ $p['agency']['name'] ?? '-' }}</dd>
             <dt>Start Date <small>วันเริ่มงาน</small></dt><dd>{{ $st['job_date_start_text'] }}</dd>
             <dt>Status <small>สถานะ</small></dt><dd>{{ $st['label_th'] }} / {{ $st['label_en'] }}</dd>
