@@ -114,6 +114,7 @@ img { max-width: 100%; }
 
 /* identity card (screen 2) */
 .card-identity { padding-top: 22px; }
+.card-identity .value-sub { font-size: var(--fs-xs, 12px); color: var(--muted, #6b7280); margin: 4px 4px 0; }
 .identity-icon { width: 76px; height: 76px; margin: -4px auto 12px; border-radius: 18px; border: 2.5px solid var(--navy); display: grid; place-items: center; color: var(--navy); background: rgba(255, 255, 255, .5); }
 .identity-icon .ico { width: 44px; height: 44px; stroke-width: 1.6; }
 .identity-icon.tone-warn { border-color: var(--warn); color: var(--warn); }
