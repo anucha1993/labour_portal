@@ -56,7 +56,7 @@ class PortalTest extends TestCase
     {
         $this->get('/')->assertRedirect('/login');
         $this->get('/documents')->assertRedirect('/login');
-        $this->get('/login')->assertOk()->assertSee('Log in')->assertSee('your passport number');
+        $this->get('/login')->assertOk()->assertSee('Log in')->assertSee('Passport number or name')->assertSee('myominoo');
     }
 
     public function test_login_sends_passport_and_birthday_to_the_admin_api_with_the_shared_key()
@@ -72,6 +72,7 @@ class PortalTest extends TestCase
 
         $home = $this->get('/');
         $home->assertOk()
+            ->assertDontSee('identity-icon has-photo')
             ->assertSee('Mr MYO MIN AUNG')
             ->assertSee('แสงลินฟู้ดส์')
             ->assertSee('Active')
@@ -100,6 +101,21 @@ class PortalTest extends TestCase
         $this->get('/')->assertRedirect('/login');
     }
 
+    public function test_name_login_is_forwarded_as_typed_and_ambiguous_names_get_a_clear_message()
+    {
+        Http::fake([self::ADMIN . '/api/portal/login' => Http::sequence()
+            ->push(['ok' => true, 'labour_id' => 7, 'profile' => $this->profile()])
+            ->push(['message' => 'x', 'errors' => ['passport' => ['ambiguous_name']]], 422),
+        ]);
+
+        $this->post('/login', ['passport' => 'myo min aung', 'password' => '06121997'])->assertRedirect('/');
+        Http::assertSent(fn ($req) => $req['passport'] === 'MYOMINAUNG');
+
+        $this->post('/logout');
+        $this->post('/login', ['passport' => 'myo min aung', 'password' => '06121997'])
+            ->assertRedirect()->assertSessionHasErrors(['passport' => 'Several workers share this name, please log in with your passport number']);
+    }
+
     public function test_disabled_account_and_unreachable_admin()
     {
         Http::fake([self::ADMIN . '/api/portal/login' => Http::sequence()
@@ -120,6 +136,13 @@ class PortalTest extends TestCase
         $this->get('/documents/12')->assertRedirect(self::ADMIN . '/portal-file/7/12?expires=1&signature=abc');
         $this->get('/documents/nope')->assertRedirect('/documents');
         $this->get('/documents/../etc')->assertNotFound();
+    }
+
+    public function test_photo_from_the_admin_api_is_shown_on_home_and_profile()
+    {
+        $this->loginOk([self::ADMIN . '/api/portal/login' => Http::response(['ok' => true, 'labour_id' => 7, 'profile' => $this->profile(['photo_url' => self::ADMIN . '/portal-file/7/photo?expires=1&signature=p'])])]);
+        $this->get('/')->assertOk()->assertSee('identity-icon has-photo')->assertSee('/portal-file/7/photo?expires=1&amp;signature=p', false);
+        $this->get('/profile')->assertOk()->assertSee('identity-icon has-photo');
     }
 
     public function test_profile_page_and_logout()

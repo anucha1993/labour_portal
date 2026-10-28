@@ -48,7 +48,7 @@ class AdminApi
 
         if ($res->status() === 422) {
             $code = (string) ($res->json('errors.passport.0') ?? 'invalid_credentials');
-            throw new AdminApiException(in_array($code, ['invalid_credentials', 'account_disabled'], true) ? $code : 'invalid_credentials', 422);
+            throw new AdminApiException(in_array($code, ['invalid_credentials', 'account_disabled', 'ambiguous_name'], true) ? $code : 'invalid_credentials', 422);
         }
         if ($res->status() === 429) {
             throw new AdminApiException('throttled', 429);

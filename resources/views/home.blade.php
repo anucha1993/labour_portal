@@ -14,7 +14,11 @@
 
     {{-- ================================================== Identity (mockup screen 2) --}}
     <section class="card card-identity">
-        <div class="identity-icon" aria-hidden="true"><x-icon name="worker" /></div>
+        @if (! empty($p['photo_url']))
+            <div class="identity-icon has-photo"><img src="{{ $p['photo_url'] }}" alt="{{ $p['full_name'] }}"></div>
+        @else
+            <div class="identity-icon" aria-hidden="true"><x-icon name="worker" /></div>
+        @endif
         <div class="field">
             <div class="label">{{ __('Name') }} <span class="en">{{ t_en('Name') }}</span></div>
             <div class="value value-name"><x-icon name="user" /> {{ $p['full_name'] ?: '-' }}</div>

@@ -117,6 +117,8 @@ img { max-width: 100%; }
 .identity-icon { width: 76px; height: 76px; margin: -4px auto 12px; border-radius: 18px; border: 2.5px solid var(--navy); display: grid; place-items: center; color: var(--navy); background: rgba(255, 255, 255, .5); }
 .identity-icon .ico { width: 44px; height: 44px; stroke-width: 1.6; }
 .identity-icon.tone-warn { border-color: var(--warn); color: var(--warn); }
+.identity-icon.has-photo { width: 96px; height: 96px; padding: 0; overflow: hidden; background: #fff; }
+.identity-icon.has-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .field { margin-bottom: 10px; }
 .field .label { font-size: .95rem; color: var(--ink-2); margin-bottom: 3px; }
 .field .value {

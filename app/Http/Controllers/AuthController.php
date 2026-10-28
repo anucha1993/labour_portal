@@ -28,7 +28,7 @@ class AuthController extends Controller
             'passport' => ['required', 'string', 'max:50'],
             'password' => ['required', 'string', 'max:20'],
         ], [
-            'passport.required' => __('Please enter your passport number'),
+            'passport.required' => __('Please enter your passport number or name'),
             'password.required' => __('Please enter your birthday'),
         ]);
 
@@ -43,7 +43,7 @@ class AuthController extends Controller
         try {
             $result = $this->api->login($passport, $data['password'], $request->ip());
         } catch (AdminApiException $e) {
-            if (in_array($e->reason, ['invalid_credentials', 'account_disabled'], true)) {
+            if (in_array($e->reason, ['invalid_credentials', 'account_disabled', 'ambiguous_name'], true)) {
                 $this->limiter->hit($throttleKey, 60);
             }
 

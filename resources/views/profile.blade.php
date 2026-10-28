@@ -13,7 +13,11 @@
         $phone = preg_replace('/\D+/', '', $emp['phone'] ?? '');
     @endphp
     <section class="card card-identity">
-        <div class="identity-icon" aria-hidden="true"><x-icon name="worker" /></div>
+        @if (! empty($p['photo_url']))
+            <div class="identity-icon has-photo"><img src="{{ $p['photo_url'] }}" alt="{{ $p['full_name'] }}"></div>
+        @else
+            <div class="identity-icon" aria-hidden="true"><x-icon name="worker" /></div>
+        @endif
         <div class="value value-name center">{{ $p['full_name'] ?: '-' }}</div>
         <div class="muted center">{{ $nat }}@if (t_en($p['nationality']['name_en'] ?? '')) · {{ $p['nationality']['name_en'] }}@endif</div>
         <div class="center mt-sm">

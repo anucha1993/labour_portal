@@ -15,7 +15,8 @@ class AdminApiException extends RuntimeException
     public function userMessage(): string
     {
         return __(match ($this->reason) {
-            'invalid_credentials' => 'Passport number or birthday is incorrect',
+            'invalid_credentials' => 'Passport number / name or birthday is incorrect',
+            'ambiguous_name' => 'Several workers share this name, please log in with your passport number',
             'account_disabled' => 'This account is disabled, please contact the company',
             'throttled' => 'Too many attempts, please wait a minute',
             'not_configured', 'bad_key' => 'System not configured, please contact the administrator',

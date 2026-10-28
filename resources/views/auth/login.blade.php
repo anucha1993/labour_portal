@@ -16,7 +16,7 @@
         @csrf
         <label class="pill-input {{ $errors->has('passport') ? 'is-invalid' : '' }}">
             <x-icon name="user" />
-            <input type="text" name="passport" value="{{ old('passport') }}" placeholder="{{ __('Passport number') }}"
+            <input type="text" name="passport" value="{{ old('passport') }}" placeholder="{{ __('Passport number or name') }}"
                    autocomplete="username" autocapitalize="characters" spellcheck="false" inputmode="text" required autofocus>
         </label>
 
@@ -36,7 +36,7 @@
         <button type="submit" class="btn btn-primary btn-block">{{ __('Log in') }}</button>
 
         <div class="login-hint">
-            <div><b>{{ __('User') }}:</b> {{ __('your passport number') }}</div>
+            <div><b>{{ __('User') }}:</b> {{ __('your passport number, or your name as in the passport (spaces do not matter, e.g. MYO MIN OO or myominoo)') }}</div>
             <div><b>{{ __('Password') }}:</b> {{ __('your birthday as day-month-year (ddmmyyyy), e.g. 4 July 1979 → 04071979') }}</div>
         </div>
     </form>
