@@ -80,6 +80,12 @@ return [
 
     'locale' => env('APP_LOCALE', 'en'),
 
+    // Languages the worker portal offers (code => native name). English is the source of lang/*.json.
+    'locales' => [
+        'en' => 'English',
+        'my' => 'မြန်မာ',
+    ],
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),

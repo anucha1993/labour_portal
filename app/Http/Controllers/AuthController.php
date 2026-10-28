@@ -28,8 +28,8 @@ class AuthController extends Controller
             'passport' => ['required', 'string', 'max:50'],
             'password' => ['required', 'string', 'max:20'],
         ], [
-            'passport.required' => 'กรุณากรอกเลขที่หนังสือเดินทาง / Please enter your passport number',
-            'password.required' => 'กรุณากรอกวันเกิด / Please enter your birthday',
+            'passport.required' => __('Please enter your passport number'),
+            'password.required' => __('Please enter your birthday'),
         ]);
 
         $passport = strtoupper(preg_replace('/\s+/', '', $data['passport']));
@@ -37,7 +37,7 @@ class AuthController extends Controller
 
         if ($this->limiter->tooManyAttempts($throttleKey, 8)) {
             return back()->withInput($request->only('passport'))
-                ->withErrors(['passport' => 'ลองเข้าสู่ระบบบ่อยเกินไป กรุณารอ ' . $this->limiter->availableIn($throttleKey) . ' วินาที / Too many attempts, please wait']);
+                ->withErrors(['passport' => __('Too many attempts, please wait a minute') . ' (' . $this->limiter->availableIn($throttleKey) . 's)']);
         }
 
         try {
@@ -60,6 +60,6 @@ class AuthController extends Controller
     {
         $this->worker->logout();
 
-        return redirect()->route('login')->with('success', 'ออกจากระบบแล้ว / Logged out');
+        return redirect()->route('login')->with('success', __('Logged out'));
     }
 }

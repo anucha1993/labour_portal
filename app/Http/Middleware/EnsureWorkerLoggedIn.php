@@ -16,7 +16,7 @@ class EnsureWorkerLoggedIn
     public function handle(Request $request, Closure $next): Response
     {
         if (! $this->worker->loggedIn()) {
-            return redirect()->route('login')->with('info', 'กรุณาเข้าสู่ระบบ / Please log in');
+            return redirect()->route('login')->with('info', __('Please log in'));
         }
 
         return $next($request);

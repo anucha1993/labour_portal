@@ -56,7 +56,7 @@ class PortalTest extends TestCase
     {
         $this->get('/')->assertRedirect('/login');
         $this->get('/documents')->assertRedirect('/login');
-        $this->get('/login')->assertOk()->assertSee('Log in')->assertSee('เลขที่ Passport');
+        $this->get('/login')->assertOk()->assertSee('Log in')->assertSee('your passport number');
     }
 
     public function test_login_sends_passport_and_birthday_to_the_admin_api_with_the_shared_key()
@@ -74,13 +74,13 @@ class PortalTest extends TestCase
         $home->assertOk()
             ->assertSee('Mr MYO MIN AUNG')
             ->assertSee('แสงลินฟู้ดส์')
-            ->assertSee('จ้างงานอยู่')
+            ->assertSee('Active')
             ->assertSee('AA1234567')
             ->assertSee('15/12/2028')
             ->assertSee('1234-5678-90')
             ->assertSee('450')
-            ->assertSee('แขวงคลองเตย')
-            ->assertSee('รายงานตัว 90 วัน'); // alert
+            ->assertSee('Sukhumvit Rd')
+            ->assertSee('90-Day Report'); // alert
 
         // The cached profile is reused: no second /labours/7 call right after login.
         Http::assertNotSent(fn ($req) => $req->url() === self::ADMIN . '/api/portal/labours/7');
@@ -96,7 +96,7 @@ class PortalTest extends TestCase
 
         $res = $this->from('/login')->post('/login', ['passport' => 'AA1234567', 'password' => '01011990']);
         $res->assertRedirect('/login')->assertSessionHasErrors('passport');
-        $this->assertStringContainsString('ไม่ถูกต้อง', session('errors')->first('passport'));
+        $this->assertStringContainsString('is incorrect', session('errors')->first('passport'));
         $this->get('/')->assertRedirect('/login');
     }
 
@@ -106,10 +106,10 @@ class PortalTest extends TestCase
             ->push(['errors' => ['passport' => ['account_disabled']]], 422)
             ->push('down', 500)->push('down', 500)]);
         $this->from('/login')->post('/login', ['passport' => 'BB1', 'password' => '01011990'])->assertSessionHasErrors('passport');
-        $this->assertStringContainsString('ปิดการใช้งาน', session('errors')->first('passport'));
+        $this->assertStringContainsString('disabled', session('errors')->first('passport'));
 
         $this->from('/login')->post('/login', ['passport' => 'BB1', 'password' => '01011990'])->assertSessionHasErrors('passport');
-        $this->assertStringContainsString('ไม่สามารถเชื่อมต่อ', session('errors')->first('passport'));
+        $this->assertStringContainsString('Cannot reach', session('errors')->first('passport'));
     }
 
     public function test_documents_page_and_opening_a_document_redirects_to_the_signed_link()
@@ -146,7 +146,37 @@ class PortalTest extends TestCase
             $this->post('/login', ['passport' => 'AA1234567', 'password' => '01011990']);
         }
         $this->from('/login')->post('/login', ['passport' => 'AA1234567', 'password' => '01011990'])->assertSessionHasErrors('passport');
-        $this->assertStringContainsString('บ่อยเกินไป', session('errors')->first('passport'));
+        $this->assertStringContainsString('Too many attempts', session('errors')->first('passport'));
         Http::assertSentCount(8);
+    }
+
+    public function test_language_switch_is_remembered_and_burmese_strings_render()
+    {
+        $this->loginOk();
+
+        // English by default; ?lang=my switches and is remembered (session + cookie) for later pages.
+        $this->get('/')->assertOk()->assertSee('Work Permit')->assertSee('lang="en"', false);
+        $this->get('/?lang=my')->assertOk()->assertSee('lang="my"', false)->assertSee(__('Work Permit', [], 'my'))->assertCookie('portal_lang', 'my');
+        $this->get('/documents')->assertOk()->assertSee('lang="my"', false)->assertSee(__('My Documents', [], 'my'));
+
+        // Unknown codes are ignored: the remembered language stays.
+        $this->get('/?lang=xx')->assertOk()->assertSee('lang="my"', false);
+        $this->get('/?lang=en')->assertOk()->assertSee('lang="en"', false);
+    }
+
+    public function test_translate_command_fills_lang_file_from_google()
+    {
+        config(['services.google.translate_key' => 'k']);
+        $dir = sys_get_temp_dir() . '/portal-lang-' . uniqid();
+        mkdir($dir);
+        app()->useLangPath($dir);
+        file_put_contents($dir . '/en.json', json_encode(['Home' => 'Home', 'Log out' => 'Log out']));
+
+        Http::fake(['translation.googleapis.com/*' => Http::response(['data' => ['translations' => [['translatedText' => 'ပင်မ'], ['translatedText' => 'ထွက်ရန်']]]])]);
+
+        $this->artisan('lang:translate', ['--locale' => ['my']])->assertSuccessful();
+        $out = json_decode(file_get_contents($dir . '/my.json'), true);
+        $this->assertSame(['Home' => 'ပင်မ', 'Log out' => 'ထွက်ရန်'], $out);
+        Http::assertSent(fn ($r) => $r['target'] === 'my' && $r['q'] === ['Home', 'Log out'] && str_contains($r->url(), 'key=k'));
     }
 }

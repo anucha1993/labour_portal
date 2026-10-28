@@ -29,7 +29,7 @@
             if (form.dataset.submitted) { return; }
             form.dataset.submitted = '1';
             btn.classList.add('is-loading');
-            btn.textContent = 'กำลังเข้าสู่ระบบ… / Signing in…';
+            btn.textContent = form.dataset.loadingText || 'Signing in…';
         });
     });
 

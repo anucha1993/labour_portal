@@ -79,3 +79,15 @@ php artisan test        # tests/Feature/PortalTest.php (จำลอง API ข�
 
 ทดสอบจริงกับเครื่อง dev: รัน admin ที่พอร์ตหนึ่ง แล้วรัน portal ด้วย
 `ADMIN_API_URL=http://127.0.0.1:8765 php artisan serve --port=8766`
+
+## ภาษา (English หลัก + မြန်မာ)
+
+- ค่าเริ่มต้นเป็นอังกฤษ เปลี่ยนได้จากปุ่มภาษาในหน้า login / แถบบน / หน้า Profile (จำไว้ในคุกกี้ 1 ปี, `?lang=my` / `?lang=en`)
+- ข้อความทั้งหมดอยู่ใน `lang/en.json` (ต้นฉบับ) และ `lang/my.json` เพิ่มภาษาได้ที่ `config/app.php` → `locales`
+- แปลอัตโนมัติด้วย Google Cloud Translation API: ตั้ง `GOOGLE_TRANSLATE_API_KEY` ใน `.env` แล้วรัน
+  ```bash
+  php artisan lang:translate            # แปลเฉพาะข้อความที่ยังไม่มีคำแปล
+  php artisan lang:translate --force    # แปลใหม่ทั้งหมด (ทับคำที่แก้มือไว้ด้วย)
+  ```
+  คำสั้นๆ บางคำ Google แปลผิดบริบท (เช่น "No." = เลขที่, "Active") จึงแก้มือไว้ใน `lang/my.json` แล้ว ถ้ารัน `--force` ต้องแก้ซ้ำ
+- ขนาดตัวอักษรทั้งแอปกำหนดจาก type scale ท้ายไฟล์ `public/css/portal.css` (`--fs-*`)

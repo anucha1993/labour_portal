@@ -39,7 +39,7 @@ class PortalController extends Controller
         }
 
         if (! $link || empty($link['url'])) {
-            return redirect()->route('documents')->with('error', 'ไม่พบเอกสาร / Document not found');
+            return redirect()->route('documents')->with('error', __('Document not found'));
         }
 
         return redirect()->away($link['url']);
@@ -56,7 +56,7 @@ class PortalController extends Controller
         if ($profile === null) {
             $this->worker->logout();
 
-            return redirect()->route('login')->with('error', 'บัญชีของคุณถูกปิดการใช้งาน กรุณาติดต่อบริษัท / Your account is disabled, please contact the company');
+            return redirect()->route('login')->with('error', __('Your account is disabled, please contact the company'));
         }
 
         return view($view, ['p' => $profile]);

@@ -7,7 +7,8 @@
             <small>{{ $p['full_name'] ?? '' }}</small>
         </span>
     </a>
-    <a href="{{ route('home') }}#alerts" class="bell {{ $alerts ? 'has' : '' }}" title="แจ้งเตือน / Alerts">
+    <x-lang-switch style="select" />
+    <a href="{{ route('home') }}#alerts" class="bell {{ $alerts ? 'has' : '' }}" title="{{ __('Alerts') }}">
         <x-icon name="bell" />
         @if ($alerts)<span class="dot">{{ count($alerts) }}</span>@endif
     </a>

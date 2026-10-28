@@ -21,6 +21,10 @@ return [
         'timeout' => (int) env('ADMIN_API_TIMEOUT', 20),
     ],
 
+    'google' => [
+        'translate_key' => env('GOOGLE_TRANSLATE_API_KEY'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

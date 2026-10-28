@@ -11,15 +11,15 @@ class AdminApiException extends RuntimeException
         parent::__construct($reason, $status, $previous);
     }
 
-    /** Bilingual message shown to the worker. */
+    /** Message shown to the worker, in the current UI language. */
     public function userMessage(): string
     {
-        return match ($this->reason) {
-            'invalid_credentials' => 'เลขที่หนังสือเดินทางหรือวันเกิดไม่ถูกต้อง / Passport number or birthday is incorrect',
-            'account_disabled' => 'บัญชีนี้ถูกปิดการใช้งาน กรุณาติดต่อบริษัท / This account is disabled, please contact the company',
-            'throttled' => 'ลองเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่ / Too many attempts, please wait a minute',
-            'not_configured', 'bad_key' => 'ระบบยังตั้งค่าไม่สมบูรณ์ กรุณาติดต่อผู้ดูแล / System not configured, please contact the administrator',
-            default => 'ไม่สามารถเชื่อมต่อระบบได้ กรุณาลองใหม่ / Cannot reach the server, please try again',
-        };
+        return __(match ($this->reason) {
+            'invalid_credentials' => 'Passport number or birthday is incorrect',
+            'account_disabled' => 'This account is disabled, please contact the company',
+            'throttled' => 'Too many attempts, please wait a minute',
+            'not_configured', 'bad_key' => 'System not configured, please contact the administrator',
+            default => 'Cannot reach the server, please try again',
+        });
     }
 }
