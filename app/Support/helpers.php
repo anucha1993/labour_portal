@@ -13,6 +13,14 @@ if (! function_exists('t_en')) {
     }
 }
 
+if (! function_exists('t_dyn')) {
+    /** Free text from the admin API (e.g. business type) in the current language, via Google with a cache. */
+    function t_dyn(?string $text): string
+    {
+        return app(\App\Services\DynamicTranslator::class)->to((string) $text);
+    }
+}
+
 if (! function_exists('portal_locales')) {
     /** @return array<string,string> code => native name */
     function portal_locales(): array

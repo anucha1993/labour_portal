@@ -91,4 +91,5 @@ php artisan test        # tests/Feature/PortalTest.php (จำลอง API ข�
   php artisan lang:translate --force    # แปลใหม่ทั้งหมด (ทับคำที่แก้มือไว้ด้วย)
   ```
   คำสั้นๆ บางคำ Google แปลผิดบริบท (เช่น "No." = เลขที่, "Active") จึงแก้มือไว้ใน `lang/my.json` แล้ว ถ้ารัน `--force` ต้องแก้ซ้ำ
+- ข้อความอิสระจาก admin (ตอนนี้คือประเภทกิจการ) แปลเป็นภาษาที่เลือกตอนแสดงผลด้วย `app/Services/DynamicTranslator.php` (helper `t_dyn()`) เรียก Google ครั้งเดียวต่อข้อความแล้ว cache 1 ปี ถ้า Google ล่มจะแสดงอังกฤษ
 - ขนาดตัวอักษรทั้งแอปกำหนดจาก type scale ท้ายไฟล์ `public/css/portal.css` (`--fs-*`)

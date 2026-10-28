@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -185,6 +186,22 @@ class PortalTest extends TestCase
         // Unknown codes are ignored: the remembered language stays.
         $this->get('/?lang=xx')->assertOk()->assertSee('lang="my"', false);
         $this->get('/?lang=en')->assertOk()->assertSee('lang="en"', false);
+    }
+
+    public function test_business_type_is_translated_into_burmese_once_and_cached()
+    {
+        config(['services.google.translate_key' => 'g-test']);
+        Cache::flush();
+        $this->loginOk(['translation.googleapis.com/*' => Http::response(['data' => ['translations' => [['translatedText' => 'အစားအစာ']]]])]);
+
+        // English page: no Google call, English text.
+        $this->get('/profile')->assertOk()->assertSee('Food')->assertDontSee('အစားအစာ');
+        Http::assertNotSent(fn ($req) => str_contains($req->url(), 'translation.googleapis.com'));
+
+        // Burmese page: translated value with the English under it; second view served from cache.
+        $this->get('/profile?lang=my')->assertOk()->assertSee('အစားအစာ')->assertSee('sub-en')->assertSee('Food');
+        $this->get('/profile')->assertOk()->assertSee('အစားအစာ');
+        $this->assertSame(1, Http::recorded(fn ($req) => str_contains($req->url(), 'translation.googleapis.com'))->count());
     }
 
     public function test_translate_command_fills_lang_file_from_google()

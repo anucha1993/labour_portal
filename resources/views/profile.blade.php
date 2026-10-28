@@ -45,7 +45,11 @@
         <dl class="kv">
             <dt>{{ __('Company Name') }} <small>{{ t_en('Company Name') }}</small></dt><dd>{{ ($emp['name_en'] ?? '') ?: ($emp['name'] ?? '-') }}</dd>
             @php $business = trim(($emp['type_en'] ?? '') ?: ($emp['type'] ?? ''), " -"); @endphp
-            @if ($business !== '')<dt>{{ __('Business') }} <small>{{ t_en('Business') }}</small></dt><dd>{{ $business }}</dd>@endif
+            @if ($business !== '')
+                @php $businessLocal = t_dyn($business); @endphp
+                <dt>{{ __('Business') }} <small>{{ t_en('Business') }}</small></dt>
+                <dd>{{ $businessLocal }}@if ($businessLocal !== $business)<small class="sub-en">{{ $business }}</small>@endif</dd>
+            @endif
             @if (strlen($phone) >= 6)<dt>{{ __('Phone') }} <small>{{ t_en('Phone') }}</small></dt><dd><a href="tel:{{ $phone }}">{{ $emp['phone'] }}</a></dd>@endif
             <dt>{{ __('Agency') }} <small>{{ t_en('Agency') }}</small></dt><dd>{{ $p['agency']['name'] ?? '-' }}</dd>
             <dt>{{ __('Start Date') }} <small>{{ t_en('Start Date') }}</small></dt><dd>{{ $st['job_date_start_text'] }}</dd>
