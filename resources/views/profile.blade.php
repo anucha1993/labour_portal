@@ -43,8 +43,9 @@
     <section class="card">
         <div class="card-head"><span class="card-icon tone-navy"><x-icon name="work" /></span><div><b>{{ __('Employment') }}</b><small>{{ t_en('Employment') }}</small></div></div>
         <dl class="kv">
-            <dt>{{ __('Company Name') }} <small>{{ t_en('Company Name') }}</small></dt><dd>{{ ($emp['name_en'] ?? '') ?: ($emp['name'] ?? '-') }}@if (! empty($emp['name_en']) && ! empty($emp['name']) && $emp['name_en'] !== $emp['name'])<small class="d-block">{{ $emp['name'] }}</small>@endif</dd>
-            @if ($emp && trim($emp['type'] ?? '', " -"))<dt>{{ __('Business') }} <small>{{ t_en('Business') }}</small></dt><dd>{{ $emp['type'] }}</dd>@endif
+            <dt>{{ __('Company Name') }} <small>{{ t_en('Company Name') }}</small></dt><dd>{{ ($emp['name_en'] ?? '') ?: ($emp['name'] ?? '-') }}</dd>
+            @php $business = trim(($emp['type_en'] ?? '') ?: ($emp['type'] ?? ''), " -"); @endphp
+            @if ($business !== '')<dt>{{ __('Business') }} <small>{{ t_en('Business') }}</small></dt><dd>{{ $business }}</dd>@endif
             @if (strlen($phone) >= 6)<dt>{{ __('Phone') }} <small>{{ t_en('Phone') }}</small></dt><dd><a href="tel:{{ $phone }}">{{ $emp['phone'] }}</a></dd>@endif
             <dt>{{ __('Agency') }} <small>{{ t_en('Agency') }}</small></dt><dd>{{ $p['agency']['name'] ?? '-' }}</dd>
             <dt>{{ __('Start Date') }} <small>{{ t_en('Start Date') }}</small></dt><dd>{{ $st['job_date_start_text'] }}</dd>

@@ -26,7 +26,6 @@
         <div class="field">
             <div class="label">{{ __('Company Name') }} <span class="en">{{ t_en('Company Name') }}</span></div>
             <div class="value">{{ ($emp['name_en'] ?? '') ?: ($emp['name'] ?? '-') }}</div>
-            @if (! empty($emp['name_en']) && ! empty($emp['name']) && $emp['name_en'] !== $emp['name'])<div class="value-sub">{{ $emp['name'] }}</div>@endif
         </div>
         <div class="field field-inline">
             <div class="label">{{ __('Status') }} <span class="en">{{ t_en('Status') }}</span></div>

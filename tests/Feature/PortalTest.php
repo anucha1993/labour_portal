@@ -25,7 +25,7 @@ class PortalTest extends TestCase
             'sex' => 'male', 'sex_label' => 'ชาย', 'birthday' => '1997-12-06', 'birthday_text' => '06/12/1997', 'age_text' => '28 ปี 10 เดือน', 'labour_number' => 'L-1',
             'nationality' => ['code' => 'myanmar', 'name_th' => 'พม่า', 'name_en' => 'Myanmar'],
             'status' => ['enabled' => true, 'job' => 'job', 'active' => true, 'label_th' => 'ทำงาน', 'label_en' => 'Employed', 'job_date_start' => '2025-01-01', 'job_date_start_text' => '01/01/2025', 'resign_date' => null, 'escape_date' => null],
-            'employer' => ['id' => 1, 'name' => 'แสงลินฟู้ดส์', 'name_en' => 'Saeng Lin Foods', 'type' => 'อาหาร', 'phone' => '02-123-4567', 'contact' => 'คุณเก๋', 'address' => ['line' => '123/45', 'district' => 'คลองเตย', 'amphur' => 'คลองเตย', 'province' => 'กรุงเทพมหานคร', 'zipcode' => '10110', 'text_th' => '123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110', 'text_en' => '123/45 Sukhumvit Rd, Khlong Toei, Bangkok 10110']],
+            'employer' => ['id' => 1, 'name' => 'แสงลินฟู้ดส์', 'name_en' => 'Saeng Lin Foods', 'type' => 'อาหาร', 'type_en' => 'Food', 'phone' => '02-123-4567', 'contact' => 'คุณเก๋', 'address' => ['line' => '123/45', 'district' => 'คลองเตย', 'amphur' => 'คลองเตย', 'province' => 'กรุงเทพมหานคร', 'zipcode' => '10110', 'text_th' => '123/45 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110', 'text_en' => '123/45 Sukhumvit Rd, Khlong Toei, Bangkok 10110']],
             'agency' => ['id' => 1, 'name' => 'TOP MANPOWER'],
             'passport' => ['number' => 'AA1234567', 'date_start' => null, 'date_start_text' => '-', 'date_end' => '2028-12-15', 'date_end_text' => '15/12/2028', 'days_left' => 450, 'level' => 'ok', 'warn_days' => 90],
             'visa' => ['number' => 'V-1', 'date_in' => null, 'date_in_text' => '-', 'date_start' => null, 'date_start_text' => '-', 'date_end' => null, 'date_end_text' => '-', 'days_left' => null, 'level' => 'none', 'warn_days' => 90],
@@ -73,9 +73,8 @@ class PortalTest extends TestCase
         $home = $this->get('/');
         $home->assertOk()
             ->assertDontSee('identity-icon has-photo')
-            ->assertSee('Company Name')->assertSee('Saeng Lin Foods')->assertSee('แสงลินฟู้ดส์')
+            ->assertSee('Company Name')->assertSee('Saeng Lin Foods')->assertDontSee('แสงลินฟู้ดส์')
             ->assertSee('Mr MYO MIN AUNG')
-            ->assertSee('แสงลินฟู้ดส์')
             ->assertSee('Active')
             ->assertSee('AA1234567')
             ->assertSee('15/12/2028')
